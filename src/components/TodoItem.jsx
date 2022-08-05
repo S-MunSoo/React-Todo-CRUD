@@ -1,6 +1,7 @@
 import React from "react";
 
 const TodoItem = ({ itemData, todoRemoveHandler, todoCheckHandler }) => {
+  // itemData todolist 에서 가지고온 초기값
   const { id, date, content, cheked } = itemData;
   return (
     <div>

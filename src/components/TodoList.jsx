@@ -1,44 +1,43 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import TodoItem from "./TodoItem";
 import TodoAdd from "./TodoAdd";
-
+import { todoReducer } from "../reudcer/todoReducer";
+import { useReducer } from "react";
+let initialization = [
+  {
+    id: 1,
+    date: "2020-08-03",
+    content: "코딩하기",
+    checked: false,
+  },
+];
 const TodoList = () => {
+  // TodoAdd 추가 버튼을 위해 새로운 id 값 생성 필요 use Ref 이용
   const todoID = useRef(2);
-  const todoList = [
-    {
-      id: 1,
-      date: "2022-07-30",
-      content: "공부하기",
-      checked: false,
-    },
-  ];
+  const [todoData, dispatch] = useReducer(todoReducer, initialization);
 
-  const [todoData, setTodoData] = useState(todoList);
-  // 투두제거
+  const todoAddHandler = (userInput) => {
+    dispatch({ type: "ADD", data: { ...userInput, id: todoID.current } });
+    todoID.current += 1;
+  };
+
   const todoRemoveHandler = (id) => {
-    setTodoData(todoData.filter((itemData) => itemData.id !== id));
+    dispatch({ type: "REMOVE", data: { id } });
+  };
+  const todoCheckedHandler = (id) => {
+    dispatch({ type: "CHECK", data: { id } });
   };
 
-  // 투두 체크(완료 )표시
-  const todoCheckHandler = (id) => {
-    setTodoData(
-      todoData.map((itemData) =>
-        itemData.id === id
-          ? { ...itemData, checked: !itemData.checked }
-          : itemData
-      )
-    );
-  };
   return (
     <div>
       <h2>문수's Todo</h2>
-      <TodoAdd todoID={todoID} todoData={todoData} setTodoData={setTodoData} />
+      <TodoAdd todoAddHandler={todoAddHandler} />
       {todoData.map((itemData) => (
         <TodoItem
           itemData={itemData}
           key={itemData.id}
           todoRemoveHandler={todoRemoveHandler}
-          todoCheckHandler={todoCheckHandler}
+          todoCheckHandler={todoCheckedHandler}
         />
       ))}
     </div>
